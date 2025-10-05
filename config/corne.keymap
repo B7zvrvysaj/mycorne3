@@ -44,10 +44,10 @@
 
         layer_3 {
             bindings = <
-&kp NUMBER_1  &kp NUMBER_2  &kp W           &kp UP_ARROW    &kp R            &kp T        &kp TAB    &kp F1  &kp F2  &kp F3  &kp F4  &kp F5
-&kp NUMBER_3  &kp NUMBER_4  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &kp G        &kp GRAVE  &trans  &trans  &trans  &trans  &trans
-&kp N5        &kp NUMBER_6  &kp X           &kp C           &kp V            &kp B        &trans     &trans  &trans  &trans  &trans  &mo 0
-                                            &kp LCTRL       &kp LEFT_ALT     &kp SPACE    &trans     &trans  &trans
+&kp NUMBER_1  &kp NUMBER_2  &kp E  &kp W      &kp R         &kp T        &kp TAB    &kp F1          &kp F2          &kp F3           &kp F4  &kp F5
+&kp NUMBER_3  &kp NUMBER_4  &kp A  &kp S      &kp D         &kp G        &kp GRAVE  &trans          &kp UP_ARROW    &trans           &trans  &trans
+&kp N5        &kp NUMBER_6  &kp X  &kp C      &kp V         &kp B        &trans     &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &trans  &mo 0
+                                   &kp LCTRL  &kp LEFT_ALT  &kp SPACE    &trans     &trans          &trans
             >;
         };
     };
