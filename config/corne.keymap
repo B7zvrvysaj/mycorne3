@@ -1,13 +1,15 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
+#include <studio.dtsi>  // <-- НОВОЕ: Включаем Studio snippets
 
 #define DEF 0
 #define LWR 1
 #define RSE 2
 #define ADJ 3
+#define STU 4  // <-- НОВОЕ: Слой для Studio (5-й слой)
 
-&lt { quick_tap_ms = <200>; };
+< { quick_tap_ms = <200>; };
 
 &mt { quick_tap_ms = <200>; };
 
@@ -42,7 +44,7 @@
             >;
         };
 
-        layer_3 {
+        layer_3 {  // Твой adjust слой
             bindings = <
 &kp NUMBER_1  &kp NUMBER_2  &kp E  &kp W      &kp R         &kp T        &kp TAB    &kp F1          &kp F2          &kp F3           &kp F4  &kp F5
 &kp NUMBER_3  &kp NUMBER_4  &kp A  &kp S      &kp D         &kp G        &kp GRAVE  &none           &kp UP_ARROW    &none            &none   &none
@@ -50,6 +52,21 @@
                                    &kp LCTRL  &kp LEFT_ALT  &kp SPACE    &trans     &trans          &trans
             >;
         };
+
+        // <-- НОВОЕ: Слой для Studio Unlock
+        studio_layer {
+            bindings = <
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                                  &trans  &trans  &studio_unlock  &trans  &trans  &trans  // <-- Unlock на правой половине thumb
+            >;
+        };
+    };
+
+    // <-- НОВОЕ: Добавь Studio device node (если не добавляется автоматически)
+    studio {
+        compatible = "zmk,studio";
     };
 
     conditional_layers {
