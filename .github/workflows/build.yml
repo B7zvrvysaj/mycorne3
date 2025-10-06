@@ -10,11 +10,52 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
-    with:
-      config-dir: config  # Папка с corne.conf и corne.keymap
-      boards: '["nice_nano_v2"]'  # Плата
-      shields: '["corne_left", "corne_right"]'  # Обе половины Corne
-      artifact-name: corne-firmware  # Имя артефакта
-    secrets: inherit
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      zmk-sha: ${{ steps.zmk.outputs.zmk-sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup ZMK
+        id: zmk
+        uses: zmkfirmware/zmk-setup@v1
+        with:
+          zmk-version: main  # Свежий ZMK с Studio
+          zephyr-version: main
+
+  build-left:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup ZMK
+        uses: zmkfirmware/zmk-setup@v1
+        with:
+          zmk-version: ${{ needs.setup.outputs.zmk-sha }}
+      - name: Build left half
+        run: west build -b nice_nano_v2 -d build-left -- -DSHIELD=corne_left -DZMK_CONFIG=${{ github.workspace }}/config
+      - name: Upload left firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: corne-left
+          path: build-left/zephyr/zmk.uf2
+
+  build-right:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup ZMK
+        uses: zmkfirmware/zmk-setup@v1
+        with:
+          zmk-version: ${{ needs.setup.outputs.zmk-sha }}
+      - name: Build right half
+        run: west build -b nice_nano_v2 -d build-right -- -DSHIELD=corne_right -DZMK_CONFIG=${{ github.workspace }}/config
+      - name: Upload right firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: corne-right
+          path: build-right/zephyr/zmk.uf2
