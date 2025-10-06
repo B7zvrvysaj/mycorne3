@@ -13,27 +13,8 @@ jobs:
   build:
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
     with:
-      build-matrix: |
-        [
-          {"board": "nice_nano_v2", "shield": "corne_left", "artifact-name": "corne-left"},
-          {"board": "nice_nano_v2", "shield": "corne_right", "artifact-name": "corne-right"}
-        ]
-      zmk-config: config
+      config-dir: config  # Папка с corne.conf и corne.keymap
+      boards: '["nice_nano_v2"]'  # Плата
+      shields: '["corne_left", "corne_right"]'  # Обе половины Corne
+      artifact-name: corne-firmware  # Имя артефакта
     secrets: inherit
-
-  archive:
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Download firmware
-        uses: actions/download-artifact@v4
-        with:
-          path: firmware
-      - name: Archive all firmware
-        uses: actions/upload-artifact@v4
-        with:
-          name: corne-firmware
-          path: |
-            firmware/corne-left/zmk.uf2
-            firmware/corne-right/zmk.uf2
