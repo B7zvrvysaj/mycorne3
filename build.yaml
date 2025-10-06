@@ -1,29 +1,22 @@
-name: Build ZMK Firmware
+name: Build
 
 on:
   push:
     branches:
       - main
   pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup ZMK
-        uses: zmkfirmware/zmk-build-action@v1
-        with:
-          zmk_version: main  # Укажи main для Studio
-      - name: Build Firmware
-        run: |
-          west build -p -b nice_nano_v2 -- -DSHIELD=corne_left -DZMK_CONFIG=${{ github.workspace }}/config
-          west build -p -b nice_nano_v2 -- -DSHIELD=corne_right -DZMK_CONFIG=${{ github.workspace }}/config
-      - name: Archive Firmware
-        uses: actions/upload-artifact@v4
-        with:
-          name: firmware
-          path: |
-            build/zephyr/zmk.uf2
+    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
+    with:
+      build-config: corne  # Указываем конфиг напрямую
+    strategy:
+      matrix:
+        include:
+          - board: nice_nano_v2
+            shield: corne_left
+          - board: nice_nano_v2
+            shield: corne_right
+    secrets: inherit
