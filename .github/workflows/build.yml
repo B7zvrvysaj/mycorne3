@@ -19,10 +19,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup ZMK
         id: zmk
-        uses: zmkfirmware/zmk-setup@v1
+        uses: zmkfirmware/zmk-user-setup@v1  # <-- Правильный action для user-config
         with:
-          zmk-version: main  # Свежий ZMK с Studio
-          zephyr-version: main
+          zmk-version: main  # Свежий ZMK с Studio support
 
   build-left:
     needs: setup
@@ -31,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup ZMK
-        uses: zmkfirmware/zmk-setup@v1
+        uses: zmkfirmware/zmk-user-setup@v1
         with:
           zmk-version: ${{ needs.setup.outputs.zmk-sha }}
       - name: Build left half
@@ -49,7 +48,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup ZMK
-        uses: zmkfirmware/zmk-setup@v1
+        uses: zmkfirmware/zmk-user-setup@v1
         with:
           zmk-version: ${{ needs.setup.outputs.zmk-sha }}
       - name: Build right half
@@ -59,3 +58,17 @@ jobs:
         with:
           name: corne-right
           path: build-right/zephyr/zmk.uf2
+
+  archive:
+    needs: [build-left, build-right]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+      - name: Archive firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: corne-firmware
+          path: |
+            corne-left/zmk.uf2
+            corne-right/zmk.uf2
