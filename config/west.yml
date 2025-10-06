@@ -7,7 +7,7 @@ manifest:
   projects:
     - name: zmk
       remote: zmkfirmware
-      revision: main  # Укажи main для последней версии с Studio
+      revision: main
       import:
         path-prefix: zmk
     - name: zephyr

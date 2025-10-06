@@ -1,4 +1,4 @@
-name: Build ZMK Firmware  # <-- Это имя всего workflow, не трогай
+name: Build ZMK Firmware
 
 on:
   push:
@@ -7,46 +7,33 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:  # <-- Опционально: позволяет запускать вручную
+  workflow_dispatch:
 
 jobs:
   build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main  # <-- Шаблон ZMK, тянет main для Studio
-    with:
-      board: nice_nano_v2  # <-- Твоя плата
-      shield: corne_left  # <-- Левая половина
-      zmk-config: config  # <-- Папка с corne.conf и corne.keymap
-      artifact-name: corne-left  # <-- Имя артефакта для левой
-    secrets: inherit  # <-- Если нужны секреты (обычно не нужно)
-
-  build-right:  # <-- Отдельный job для правой половины (strategy не нужен)
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
     with:
-      board: nice_nano_v2
-      shield: corne_right
+      build-matrix: |
+        [
+          {"board": "nice_nano_v2", "shield": "corne_left", "artifact-name": "corne-left"},
+          {"board": "nice_nano_v2", "shield": "corne_right", "artifact-name": "corne-right"}
+        ]
       zmk-config: config
-      artifact-name: corne-right
     secrets: inherit
 
-  archive:  # <-- Опциональный job: объединяет артефакты
-    needs: [build, build-right]  # <-- Ждёт оба билда
+  archive:
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Download left firmware
+      - name: Download firmware
         uses: actions/download-artifact@v4
         with:
-          name: corne-left
-          path: firmware-left
-      - name: Download right firmware
-        uses: actions/download-artifact@v4
-        with:
-          name: corne-right
-          path: firmware-right
+          path: firmware
       - name: Archive all firmware
         uses: actions/upload-artifact@v4
         with:
           name: corne-firmware
           path: |
-            firmware-left/zmk.uf2
-            firmware-right/zmk.uf2
+            firmware/corne-left/zmk.uf2
+            firmware/corne-right/zmk.uf2
